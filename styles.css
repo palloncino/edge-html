@@ -3,7 +3,6 @@ body, html {
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* Prevent natural scroll */
     font-family: Arial, sans-serif;
 }
 
@@ -63,19 +62,27 @@ nav ul li a {
 .custom-scrollbar {
     position: fixed;
     right: 20px;
-    top: 60px; /* Start below the header */
-    width: 20px;
-    height: calc(100% - 60px); /* Full height minus the header */
-    background: lightgray;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between;
+    align-items: center;
+    height: 200px; /* Height to accommodate four dots */
+    background: lightgray;
+    padding: 10px;
+    border-radius: 10px;
 }
 
-.custom-scrollbar .pin {
+.custom-scrollbar .dot {
     width: 20px;
-    height: 25%;
+    height: 20px;
     background: gray;
+    border-radius: 50%;
     cursor: pointer;
-    transition: top 0.3s;
+    transition: background 0.3s;
+}
+
+.custom-scrollbar .dot.active {
+    background: black;
 }
