@@ -3,73 +3,17 @@ body, html {
     padding: 0;
     width: 100%;
     height: 100%;
-    font-family: Arial, sans-serif;
-}
-
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    margin: 0;
-    padding: 0;
-}
-
-nav ul li {
-    margin-left: 20px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: black;
-    font-size: 18px;
-}
-
-.container {
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    margin-top: 60px; /* To account for the fixed header */
-}
-
-.section {
-    width: 100%;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 48px;
+    background-color: #f0f0f0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
 }
 
 .custom-scrollbar {
-    position: fixed;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    height: 80vh; /* Adjust height as needed */
+    position: relative;
+    height: 400px; /* Adjust height as needed */
     width: 20px;
     background: lightgray;
     padding: 10px;
@@ -80,6 +24,8 @@ nav ul li a {
     position: absolute;
     top: 0;
     bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 4px;
     background: darkgray;
     border-radius: 2px;
@@ -94,9 +40,5 @@ nav ul li a {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    transition: background 0.3s, top 0.1s;
-}
-
-.custom-scrollbar .dot.active {
-    background: black;
+    transition: background 0.3s;
 }
