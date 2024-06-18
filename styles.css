@@ -68,10 +68,20 @@ nav ul li a {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    height: 200px; /* Height to accommodate four dots */
+    height: 200px; /* Height to accommodate the scroll track */
+    width: 20px;
     background: lightgray;
     padding: 10px;
     border-radius: 10px;
+}
+
+.scroll-track {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: darkgray;
+    border-radius: 2px;
 }
 
 .custom-scrollbar .dot {
@@ -80,9 +90,9 @@ nav ul li a {
     background: gray;
     border-radius: 50%;
     cursor: pointer;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     transition: background 0.3s;
-}
-
-.custom-scrollbar .dot.active {
-    background: black;
 }

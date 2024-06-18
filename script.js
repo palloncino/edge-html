@@ -1,81 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('.section');
-    const dots = document.querySelectorAll('.custom-scrollbar .dot');
+    const dot = document.querySelector('.custom-scrollbar .dot');
     const totalSections = sections.length;
+    const sectionHeight = window.innerHeight;
     let currentSection = 0;
     let isDragging = false;
+    let startY = 0;
+    let startTop = 0;
 
     const setScrollPosition = (position) => {
-        console.log(`Setting scroll position: ${position}`);
         window.scrollTo({
             top: position,
             behavior: 'smooth'
         });
     };
 
-    const updateActiveDot = (index) => {
-        console.log(`Updating active dot: ${index}`);
-        dots.forEach((dot, i) => {
-            if (i === index) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
+    const updateDotPosition = (index) => {
+        const step = (document.querySelector('.custom-scrollbar').clientHeight - dot.clientHeight) / (totalSections - 1);
+        dot.style.top = `${index * step}px`;
     };
 
     const scrollToSection = (index) => {
         if (index >= 0 && index < totalSections) {
-            console.log(`Scrolling to section: ${index}`);
             currentSection = index;
-            const position = index * window.innerHeight;
+            const position = index * sectionHeight;
             setScrollPosition(position);
-            updateActiveDot(index);
+            updateDotPosition(index);
         }
     };
 
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            console.log(`Dot clicked: ${index}`);
-            scrollToSection(index);
-        });
-
-        dot.addEventListener('mousedown', () => {
-            console.log(`Dot mousedown: ${index}`);
-            isDragging = true;
-            document.addEventListener('mousemove', onDrag);
-            document.addEventListener('mouseup', onStopDrag);
-        });
-
-        const onDrag = (e) => {
-            if (isDragging) {
-                const totalHeight = window.innerHeight;
-                const newPosition = e.clientY;
-                const newSection = Math.floor((newPosition - dots[0].getBoundingClientRect().top) / (totalHeight / totalSections));
-
-                if (newSection !== currentSection && newSection >= 0 && newSection < totalSections) {
-                    console.log(`Dragging to section: ${newSection}`);
-                    scrollToSection(newSection);
-                }
-            }
-        };
-
-        const onStopDrag = () => {
-            console.log('Stopping drag');
-            isDragging = false;
-            document.removeEventListener('mousemove', onDrag);
-            document.removeEventListener('mouseup', onStopDrag);
-        };
+    dot.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startY = e.clientY;
+        startTop = dot.offsetTop;
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', onStopDrag);
     });
 
-    // Prevent natural scrolling
+    const onDrag = (e) => {
+        if (isDragging) {
+            const step = (document.querySelector('.custom-scrollbar').clientHeight - dot.clientHeight) / (totalSections - 1);
+            const delta = e.clientY - startY;
+            const newPosition = startTop + delta;
+            const newSection = Math.round(newPosition / step);
+
+            if (newSection !== currentSection && newSection >= 0 && newSection < totalSections) {
+                scrollToSection(newSection);
+            }
+        }
+    };
+
+    const onStopDrag = () => {
+        isDragging = false;
+        document.removeEventListener('mousemove', onDrag);
+        document.removeEventListener('mouseup', onStopDrag);
+    };
+
     window.addEventListener('wheel', (e) => {
         e.preventDefault();
         if (e.deltaY < 0 && currentSection > 0) {
-            console.log('Wheel scroll up');
             scrollToSection(currentSection - 1);
         } else if (e.deltaY > 0 && currentSection < totalSections - 1) {
-            console.log('Wheel scroll down');
             scrollToSection(currentSection + 1);
         }
     }, { passive: false });
