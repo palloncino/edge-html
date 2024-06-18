@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', onStopDrag);
 
-        // Snap to the nearest segment
+        // Smooth transition to the nearest segment endpoint
         const segmentStart = Math.floor(dot.offsetTop / segmentHeight) * segmentHeight;
         const segmentEnd = segmentStart + segmentHeight;
         let finalPosition;
@@ -40,8 +40,15 @@ document.addEventListener('DOMContentLoaded', () => {
             finalPosition = segmentEnd;
         }
 
+        // Adding smooth transition
+        dot.style.transition = 'top 0.3s ease-out';
         dot.style.top = `${finalPosition}px`;
         logDotPosition(finalPosition);
+
+        // Remove the transition after it's done to ensure instant movement during dragging
+        setTimeout(() => {
+            dot.style.transition = '';
+        }, 300);
     };
 
     dot.addEventListener('mousedown', (e) => {
