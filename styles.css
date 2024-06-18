@@ -1,0 +1,81 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Prevent natural scroll */
+    font-family: Arial, sans-serif;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 60px; /* To account for the fixed header */
+}
+
+.section {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+}
+
+.custom-scrollbar {
+    position: fixed;
+    right: 20px;
+    top: 60px; /* Start below the header */
+    width: 20px;
+    height: calc(100% - 60px); /* Full height minus the header */
+    background: lightgray;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.custom-scrollbar .pin {
+    width: 20px;
+    height: 25%;
+    background: gray;
+    cursor: pointer;
+    transition: top 0.3s;
+}
