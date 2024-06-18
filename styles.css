@@ -12,12 +12,13 @@ header {
     left: 0;
     width: 100%;
     height: 60px;
-    background: transparent;
+    background: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
     z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
@@ -91,8 +92,11 @@ nav ul li a {
     border-radius: 50%;
     cursor: pointer;
     position: absolute;
-    top: 0;
     left: 50%;
     transform: translateX(-50%);
-    transition: background 0.3s;
+    transition: background 0.3s, top 0.3s;
+}
+
+.custom-scrollbar .dot.active {
+    background: black;
 }
