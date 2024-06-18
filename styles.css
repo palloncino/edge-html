@@ -69,7 +69,7 @@ nav ul li a {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    height: 200px; /* Height to accommodate the scroll track */
+    height: 80vh; /* Adjust height as needed */
     width: 20px;
     background: lightgray;
     padding: 10px;
@@ -94,7 +94,7 @@ nav ul li a {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    transition: background 0.3s, top 0.3s;
+    transition: background 0.3s, top 0.1s;
 }
 
 .custom-scrollbar .dot.active {

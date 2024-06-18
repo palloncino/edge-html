@@ -3,14 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const dot = document.querySelector('.custom-scrollbar .dot');
     const totalSections = sections.length;
     const sectionHeight = window.innerHeight;
-    let currentSection = 0;
+    const scrollHeight = document.body.scrollHeight - window.innerHeight;
+    const scrollbarHeight = document.querySelector('.custom-scrollbar').clientHeight - dot.clientHeight;
     let isDragging = false;
     let startY = 0;
     let startTop = 0;
-    let preventScroll = false;
+
+    const debounce = (func, wait) => {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    };
 
     const setScrollPosition = (position) => {
-        console.log(`Setting scroll position: ${position}`);
         window.scrollTo({
             top: position,
             behavior: 'smooth'
@@ -18,23 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
         logScrollValue(position);
     };
 
-    const updateDotPosition = (index) => {
-        const step = (document.querySelector('.custom-scrollbar').clientHeight - dot.clientHeight) / (totalSections - 1);
-        dot.style.top = `${index * step}px`;
+    const updateDotPosition = (scrollY) => {
+        const positionRatio = scrollY / scrollHeight;
+        const dotPosition = positionRatio * scrollbarHeight;
+        dot.style.top = `${dotPosition}px`;
     };
 
     const scrollToSection = (index) => {
         if (index >= 0 && index < totalSections) {
-            currentSection = index;
             const position = index * sectionHeight;
             setScrollPosition(position);
-            updateDotPosition(index);
+            updateDotPosition(position);
         }
     };
 
     dot.addEventListener('mousedown', (e) => {
         isDragging = true;
-        preventScroll = true;
         startY = e.clientY;
         startTop = dot.offsetTop;
         document.addEventListener('mousemove', onDrag);
@@ -43,69 +49,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const onDrag = (e) => {
         if (isDragging) {
-            const step = (document.querySelector('.custom-scrollbar').clientHeight - dot.clientHeight) / (totalSections - 1);
             const delta = e.clientY - startY;
-            const newPosition = startTop + delta;
+            let newPosition = startTop + delta;
 
-            if (newPosition >= 0 && newPosition <= step * (totalSections - 1)) {
-                dot.style.top = `${newPosition}px`;
+            if (newPosition < 0) newPosition = 0;
+            if (newPosition > scrollbarHeight) newPosition = scrollbarHeight;
 
-                const newSection = Math.round(newPosition / step);
-                if (newSection !== currentSection) {
-                    currentSection = newSection;
-                    setScrollPosition(newSection * sectionHeight);
-                }
-            }
+            const positionRatio = newPosition / scrollbarHeight;
+            const scrollY = positionRatio * scrollHeight;
+            dot.style.top = `${newPosition}px`;
+            window.scrollTo({
+                top: scrollY,
+                behavior: 'auto'
+            });
+            logScrollValue(scrollY);
         }
     };
 
     const onStopDrag = () => {
         isDragging = false;
-        preventScroll = false;
-        const step = (document.querySelector('.custom-scrollbar').clientHeight - dot.clientHeight) / (totalSections - 1);
-        const newPosition = dot.offsetTop;
-        const newSection = Math.round(newPosition / step);
-        scrollToSection(newSection);
         document.removeEventListener('mousemove', onDrag);
         document.removeEventListener('mouseup', onStopDrag);
-    };
 
-    // Debounce function to limit the rate at which a function can fire
-    const debounce = (func, wait) => {
-        let timeout;
-        return function() {
-            const context = this;
-            const args = arguments;
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(context, args), wait);
-        };
+        // Snap to the nearest section
+        const positionRatio = dot.offsetTop / scrollbarHeight;
+        const scrollY = positionRatio * scrollHeight;
+        const newSection = Math.round(scrollY / sectionHeight);
+        scrollToSection(newSection);
     };
 
     window.addEventListener('scroll', debounce(() => {
-        if (!preventScroll) {
+        if (!isDragging) {
             const currentPosition = window.scrollY;
-            const newSection = Math.round(currentPosition / sectionHeight);
-            if (newSection !== currentSection) {
-                currentSection = newSection;
-                updateDotPosition(newSection);
-                logScrollValue(currentPosition);
-            }
+            updateDotPosition(currentPosition);
         }
     }, 200));
 
-    // Handle wheel events
-    window.addEventListener('wheel', (e) => {
-        if (!preventScroll) {
-            e.preventDefault();
-            if (e.deltaY < 0 && currentSection > 0) {
-                scrollToSection(currentSection - 1);
-            } else if (e.deltaY > 0 && currentSection < totalSections - 1) {
-                scrollToSection(currentSection + 1);
-            }
-        }
-    }, { passive: false });
-
-    // Log scroll value
     const logScrollValue = (value) => {
         console.log(`Scroll position: ${value}`);
     };
