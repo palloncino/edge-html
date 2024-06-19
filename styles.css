@@ -12,7 +12,10 @@ body, html {
 }
 
 .custom-scrollbar {
-    position: relative;
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
     height: 400px; /* Adjust height as needed */
     width: 20px;
     background: lightgray;
