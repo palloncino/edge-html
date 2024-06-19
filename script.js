@@ -2,8 +2,9 @@
 const SCROLLBAR = document.querySelector(".custom-scrollbar");
 const DOM_OUTPUT_DIV = document.querySelector(".output");
 const DOM_DOT = document.querySelector(".custom-scrollbar .dot");
+const SECTIONS = document.querySelectorAll("section");
 const SCROLLBAR_HEIGHT = SCROLLBAR.clientHeight - DOM_DOT.clientHeight;
-const SEGMENT_HEIGHT = SCROLLBAR_HEIGHT / 3; // Dividing into 4 segments, 3 gaps
+const SEGMENT_HEIGHT = SCROLLBAR_HEIGHT / (SECTIONS.length - 1);
 const TRANSITION_DURATION = 300; // Transition duration in milliseconds
 
 let isDragging = false;
@@ -12,7 +13,7 @@ let startTop = 0;
 
 // **UTILITY FUNCTIONS**
 function logDotPosition(position) {
-  DOM_OUTPUT_DIV.textContent = `Dot position: ${position.toFixed(
+  DOM_OUTPUT_DIV.textContent = `${position.toFixed(
     2
   )} / ${SCROLLBAR_HEIGHT.toFixed(2)}`;
   console.log(`Dot position: ${position.toFixed(2)} / ${SCROLLBAR_HEIGHT.toFixed(2)}`);
@@ -43,17 +44,20 @@ function animateTransition(start, end, duration) {
   requestAnimationFrame(animationStep);
 }
 
+function scrollToSection(index) {
+  const targetTop = index * window.innerHeight;
+  window.scrollTo({ top: targetTop, behavior: 'smooth' });
+}
+
 function onStopDrag() {
   isDragging = false;
   document.removeEventListener("mousemove", onDrag);
   document.removeEventListener("mouseup", onStopDrag);
 
-  // **Smooth transition to the nearest segment endpoint**
-  const segmentStart = Math.floor(DOM_DOT.offsetTop / SEGMENT_HEIGHT) * SEGMENT_HEIGHT;
-  const segmentEnd = segmentStart + SEGMENT_HEIGHT;
-  const finalPosition = DOM_DOT.offsetTop < segmentStart + SEGMENT_HEIGHT / 2 ? segmentStart : segmentEnd;
-
+  const nearestSegment = Math.round(DOM_DOT.offsetTop / SEGMENT_HEIGHT);
+  const finalPosition = nearestSegment * SEGMENT_HEIGHT;
   animateTransition(DOM_DOT.offsetTop, finalPosition, TRANSITION_DURATION);
+  scrollToSection(nearestSegment);
 }
 
 function onDrag(e) {
@@ -71,6 +75,12 @@ function onDrag(e) {
 
 // **EVENT LISTENERS**
 document.addEventListener("DOMContentLoaded", () => {
+  // Prevent natural scrolling
+  window.addEventListener('scroll', (e) => {
+    e.preventDefault();
+    window.scrollTo(0, 0);
+  });
+
   DOM_DOT.addEventListener("mousedown", (e) => {
     isDragging = true;
     startY = e.clientY;
