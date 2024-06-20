@@ -3,9 +3,9 @@
     right: 2rem;
     top: 50%;
     transform: translateY(-50%);
-    height: 400px; /* Adjust height as needed */
+    height: 400px;
     width: 20px;
-    background: #333333; /* Darker background */
+    background: #3B1573;
     border-radius: 10px;
 }
 
@@ -22,7 +22,7 @@
 .custom-scrollbar .dot {
     width: 30px;
     height: 30px;
-    background: #888888; /* Light gray for the dot */
+    background: orange;
     border-radius: 50%;
     cursor: pointer;
     position: absolute;
@@ -32,5 +32,5 @@
 }
 
 .custom-scrollbar .dot:hover {
-    background: #aaaaaa; /* Slightly lighter gray on hover */
+    background: #E846A0;
 }
