@@ -1,0 +1,72 @@
+.sections {
+    height: 400vh; /* Example for 4 sections */
+    display: flex;
+    flex-direction: column;
+}
+
+.section {
+    height: 100vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    font-size: 2rem;
+}
+
+.section-content-container {
+    box-sizing: border-box;
+    height: calc(100% - 130px);
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    font-size: 2rem;
+}
+
+.section-left-content-container {
+    box-sizing: border-box;
+    height: 100%;
+    max-width: 75%;
+    padding: 40px 0 40px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.section-title-text {
+    font-size: 3.6rem;
+}
+
+.section-subtitle-text {
+    
+}
+
+.section-action-button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    width: 100px;
+    background: #528AF8;
+    color: white;
+    height: 40px;
+    border-radius: 24px;
+    
+}
+
+.section-1 {
+    background-color: #1e1e1e; /* Darker background */
+}
+
+.section-2 {
+    background-color: #2a2a2a; /* Slightly lighter dark background */
+}
+
+.section-3 {
+    background-color: #333333; /* Medium dark background */
+}
+
+.section-4 {
+    background-color: #3d3d3d; /* Lightest dark background */
+}

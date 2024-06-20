@@ -1,0 +1,36 @@
+.custom-scrollbar {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 400px; /* Adjust height as needed */
+    width: 20px;
+    background: #333333; /* Darker background */
+    border-radius: 10px;
+}
+
+.scroll-track {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    border-radius: 2px;
+}
+
+.custom-scrollbar .dot {
+    width: 30px;
+    height: 30px;
+    background: #888888; /* Light gray for the dot */
+    border-radius: 50%;
+    cursor: pointer;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: background 0.3s;
+}
+
+.custom-scrollbar .dot:hover {
+    background: #aaaaaa; /* Slightly lighter gray on hover */
+}

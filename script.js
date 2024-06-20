@@ -1,6 +1,5 @@
 // **GLOBAL SETTINGS**
 const SCROLLBAR = document.querySelector(".custom-scrollbar");
-const DOM_OUTPUT_DIV = document.querySelector(".output");
 const DOM_DOT = document.querySelector(".custom-scrollbar .dot");
 const SECTIONS = document.querySelectorAll("section");
 const SCROLLBAR_HEIGHT = SCROLLBAR.clientHeight - DOM_DOT.clientHeight;
@@ -14,9 +13,6 @@ let animationFrameId = null;
 
 // **UTILITY FUNCTIONS**
 function logDotPosition(position) {
-    DOM_OUTPUT_DIV.textContent = `${position.toFixed(
-        2
-    )} / ${SCROLLBAR_HEIGHT.toFixed(2)}`;
     console.log(`Dot position: ${position.toFixed(2)} / ${SCROLLBAR_HEIGHT.toFixed(2)}`);
 }
 
