@@ -1,9 +1,8 @@
 .header {
-    position: fixed;
     box-sizing: border-box;
-    top: 0;
-    left: 0;
-    width: 100%;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -29,9 +28,10 @@
 }
 
 .header-navigation-links {
+    background: #3B1573;
+    color: orange;
     display: flex;
     align-items: center;
-    background: #528AF8;
     border-radius: 24px;
     padding: 0.5rem;
     height: 24px;
