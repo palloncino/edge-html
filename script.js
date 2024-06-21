@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const SVG_CONTAINERS = document.querySelectorAll(".section-svg-container");
     const SCROLLBAR = document.querySelector(".custom-scrollbar");
     const DOM_DOT = document.querySelector(".custom-scrollbar .dot");
+    const APP_CONTAINER = document.querySelector('.app-container');
     const SCROLLBAR_HEIGHT = SCROLLBAR.clientHeight - DOM_DOT.clientHeight;
     const SEGMENT_HEIGHT = SCROLLBAR_HEIGHT / (SECTIONS.length - 1);
     const TRANSITION_DURATION = 300; // Transition duration in milliseconds
@@ -12,12 +13,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let startTop = 0;
     let animationFrameId = null;
 
-    // Function to position SVGs halfway on the bottom line of each section
+    // Function to position SVGs halfway on the bottom line of each section and set their width
     function positionSVGs() {
+        const appContainerWidth = APP_CONTAINER.clientWidth;
+        const svgWidth = appContainerWidth * 0.75;
+
         SECTIONS.forEach((section, index) => {
             const svg = SVG_CONTAINERS[index];
             const sectionHeight = section.clientHeight;
-            const svgHeight = svg.clientHeight;
+            const svgHeight = sectionHeight / 2; // Make the SVG height half of the section height
+
+            // Set the width and height of the SVG container
+            svg.style.width = `${svgWidth}px`;
+            svg.style.height = `${svgHeight}px`;
 
             // Calculate position: halfway hidden at the bottom of the section
             const initialTop = sectionHeight - (svgHeight / 2);
@@ -155,6 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener('resize', positionSVGs); // Recalculate positions on resize
 
     // Initial call to position SVGs and dot correctly
     positionSVGs();
