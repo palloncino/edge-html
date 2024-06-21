@@ -1,97 +1,133 @@
-// **GLOBAL SETTINGS**
-const SCROLLBAR = document.querySelector(".custom-scrollbar");
-const DOM_DOT = document.querySelector(".custom-scrollbar .dot");
-const SECTIONS = document.querySelectorAll("section");
-const SCROLLBAR_HEIGHT = SCROLLBAR.clientHeight - DOM_DOT.clientHeight;
-const SEGMENT_HEIGHT = SCROLLBAR_HEIGHT / (SECTIONS.length - 1);
-const TRANSITION_DURATION = 300; // Transition duration in milliseconds
+document.addEventListener("DOMContentLoaded", () => {
+    const SECTIONS = document.querySelectorAll("section");
+    const SVG_CONTAINERS = document.querySelectorAll(".section-svg-container");
+    const SCROLLBAR = document.querySelector(".custom-scrollbar");
+    const DOM_DOT = document.querySelector(".custom-scrollbar .dot");
+    const SCROLLBAR_HEIGHT = SCROLLBAR.clientHeight - DOM_DOT.clientHeight;
+    const SEGMENT_HEIGHT = SCROLLBAR_HEIGHT / (SECTIONS.length - 1);
+    const TRANSITION_DURATION = 300; // Transition duration in milliseconds
 
-let isDragging = false;
-let startY = 0;
-let startTop = 0;
-let animationFrameId = null;
+    let isDragging = false;
+    let startY = 0;
+    let startTop = 0;
+    let animationFrameId = null;
 
-// **UTILITY FUNCTIONS**
-function logDotPosition(position) {
-    console.log(`Dot position: ${position.toFixed(2)} / ${SCROLLBAR_HEIGHT.toFixed(2)}`);
-}
+    function handleScroll() {
+        const scrollPosition = window.scrollY;
+        const sectionHeight = window.innerHeight;
 
-function easeOutQuad(t) {
-    return t * (2 - t);
-}
+        SECTIONS.forEach((section, index) => {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + sectionHeight;
 
-function animateTransition(start, end, duration) {
-    let startTime = null;
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                const progress = (scrollPosition - sectionTop) / sectionHeight;
+                updateSVGPosition(index, progress);
+            }
+        });
 
-    function animationStep(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const elapsed = timestamp - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = easeOutQuad(progress);
-        const currentPosition = start + (end - start) * easedProgress;
+        updateDotPosition();
+    }
 
-        DOM_DOT.style.top = `${currentPosition}px`;
-        logDotPosition(currentPosition);
+    function updateSVGPosition(index, progress) {
+        const currentSVG = SVG_CONTAINERS[index];
+        const nextSVG = SVG_CONTAINERS[index + 1];
 
-        const scrollPosition = (currentPosition / SCROLLBAR_HEIGHT) * (SECTIONS.length - 1) * window.innerHeight;
-        window.scrollTo({ top: scrollPosition });
+        const rotationAngle = 20; // Maximum rotation angle
+        const maxOffset = 1000; // Maximum offset for the SVGs
 
-        if (progress < 1) {
-            animationFrameId = requestAnimationFrame(animationStep);
-        } else {
-            document.body.style.overflow = 'hidden'; // Reapply overflow: hidden
-            animationFrameId = null; // Reset the animation frame id
+        // Move the current SVG out to the right
+        const currentOffset = maxOffset * progress;
+        const currentRotation = rotationAngle * progress;
+        currentSVG.style.transform = `translateX(${currentOffset}px) rotate(${currentRotation}deg)`;
+
+        // Move the next SVG in from the right
+        if (nextSVG) {
+            const nextOffset = maxOffset * (1 - progress);
+            const nextRotation = rotationAngle * (1 - progress);
+            nextSVG.style.transform = `translateX(${nextOffset}px) rotate(${nextRotation}deg)`;
         }
     }
 
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId); // Cancel any ongoing animation
+    function logDotPosition(position) {
+        console.log(`Dot position: ${position.toFixed(2)} / ${SCROLLBAR_HEIGHT.toFixed(2)}`);
     }
 
-    animationFrameId = requestAnimationFrame(animationStep);
-}
-
-function onStopDrag() {
-    console.log('onStopDrag');
-    isDragging = false;
-    document.removeEventListener("mousemove", onDrag);
-    document.removeEventListener("mouseup", onStopDrag);
-
-    const nearestSegment = Math.round(DOM_DOT.offsetTop / SEGMENT_HEIGHT);
-    const finalPosition = nearestSegment * SEGMENT_HEIGHT;
-    animateTransition(DOM_DOT.offsetTop, finalPosition, TRANSITION_DURATION);
-}
-
-function onDrag(e) {
-    if (isDragging) {
-        const delta = e.clientY - startY;
-        let newPosition = startTop + delta;
-
-        // **Restrict movement within the scrollbar**
-        newPosition = Math.max(0, Math.min(newPosition, SCROLLBAR_HEIGHT));
-
-        DOM_DOT.style.top = `${newPosition}px`;
-        logDotPosition(newPosition);
-
-        // Calculate the corresponding scroll position and scroll the page
-        const scrollPosition = (newPosition / SCROLLBAR_HEIGHT) * (SECTIONS.length - 1) * window.innerHeight;
-        window.scrollTo({ top: scrollPosition });
-    }
-}
-
-function updateDotPosition() {
-    if (animationFrameId) {
-        return; // If an animation is ongoing, skip updating the position
+    function easeOutQuad(t) {
+        return t * (2 - t);
     }
 
-    const scrollPosition = window.scrollY;
-    const dotPosition = (scrollPosition / ((SECTIONS.length - 1) * window.innerHeight)) * SCROLLBAR_HEIGHT;
-    DOM_DOT.style.top = `${dotPosition}px`;
-    logDotPosition(dotPosition);
-}
+    function animateTransition(start, end, duration) {
+        let startTime = null;
 
-// **EVENT LISTENERS**
-document.addEventListener("DOMContentLoaded", () => {
+        function animationStep(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeOutQuad(progress);
+            const currentPosition = start + (end - start) * easedProgress;
+
+            DOM_DOT.style.top = `${currentPosition}px`;
+            logDotPosition(currentPosition);
+
+            const scrollPosition = (currentPosition / SCROLLBAR_HEIGHT) * (SECTIONS.length - 1) * window.innerHeight;
+            window.scrollTo({ top: scrollPosition });
+
+            if (progress < 1) {
+                animationFrameId = requestAnimationFrame(animationStep);
+            } else {
+                document.body.style.overflow = 'hidden'; // Reapply overflow: hidden
+                animationFrameId = null; // Reset the animation frame id
+            }
+        }
+
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId); // Cancel any ongoing animation
+        }
+
+        animationFrameId = requestAnimationFrame(animationStep);
+    }
+
+    function onStopDrag() {
+        console.log('onStopDrag');
+        isDragging = false;
+        document.removeEventListener("mousemove", onDrag);
+        document.removeEventListener("mouseup", onStopDrag);
+
+        const nearestSegment = Math.round(DOM_DOT.offsetTop / SEGMENT_HEIGHT);
+        const finalPosition = nearestSegment * SEGMENT_HEIGHT;
+        animateTransition(DOM_DOT.offsetTop, finalPosition, TRANSITION_DURATION);
+    }
+
+    function onDrag(e) {
+        if (isDragging) {
+            const delta = e.clientY - startY;
+            let newPosition = startTop + delta;
+
+            // **Restrict movement within the scrollbar**
+            newPosition = Math.max(0, Math.min(newPosition, SCROLLBAR_HEIGHT));
+
+            DOM_DOT.style.top = `${newPosition}px`;
+            logDotPosition(newPosition);
+
+            // Calculate the corresponding scroll position and scroll the page
+            const scrollPosition = (newPosition / SCROLLBAR_HEIGHT) * (SECTIONS.length - 1) * window.innerHeight;
+            window.scrollTo({ top: scrollPosition });
+        }
+    }
+
+    function updateDotPosition() {
+        if (animationFrameId) {
+            return; // If an animation is ongoing, skip updating the position
+        }
+
+        const scrollPosition = window.scrollY;
+        const dotPosition = (scrollPosition / ((SECTIONS.length - 1) * window.innerHeight)) * SCROLLBAR_HEIGHT;
+        DOM_DOT.style.top = `${dotPosition}px`;
+        logDotPosition(dotPosition);
+    }
+
+    // **EVENT LISTENERS**
     document.body.style.overflow = 'hidden'; // Apply overflow: hidden on page load
 
     DOM_DOT.addEventListener("mousedown", (e) => {
@@ -103,5 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.addEventListener("mouseup", onStopDrag);
     });
 
-    window.addEventListener("scroll", updateDotPosition);
+    window.addEventListener("scroll", handleScroll);
+
+    // Initial call to position SVGs and dot correctly
+    handleScroll();
 });

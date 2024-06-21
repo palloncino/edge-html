@@ -75,17 +75,34 @@
 }
 
 .section-1 {
+    position: relative;
+    z-index: -2;
     background: transparent;
 }
 
 .section-2 {
+    position: relative;
+    z-index: -2;
     background: transparent;
 }
 
 .section-3 {
+    position: relative;
+    z-index: -2;
     background: transparent;
 }
 
 .section-4 {
+    position: relative;
+    z-index: -2;
     background: transparent;
+}
+
+.section-svg-container {
+    width: 750px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translateY(50%) translateX(25%);
+    z-index: -1;
 }
