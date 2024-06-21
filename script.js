@@ -14,24 +14,21 @@ document.addEventListener("DOMContentLoaded", () => {
     let animationFrameId = null;
 
     const svgConfig = [
-        { index: 0, bottom: '0', right: '-12%' }, // SVG 1
-        { index: 1, top: '10%', right: '-12%' },  // SVG 2
-        { index: 2, bottom: '0', right: '-12%' }, // SVG 3
-        { index: 3, bottom: '0', right: '-12%' }  // SVG 4
+        { index: 0, bottom: '0', right: '-12%', width: '75%' }, // SVG 1
+        { index: 1, bottom: '0', right: '10%', width: '60%' },  // SVG 2
+        { index: 2, bottom: '0', right: '-20%', width: '100%' }, // SVG 3
+        { index: 3, bottom: '0', right: '-12%', width: '85%' }  // SVG 4
     ];
 
     // Function to position SVGs according to the configuration
     function positionSVGs() {
-        const appContainerWidth = APP_CONTAINER.clientWidth;
-        const svgWidth = appContainerWidth * 0.75;
-
         svgConfig.forEach(config => {
             const svg = SVG_CONTAINERS[config.index];
             const sectionHeight = SECTIONS[config.index].clientHeight;
             const svgHeight = sectionHeight / 2; // Make the SVG height half of the section height
 
             // Set the width and height of the SVG container
-            svg.style.width = `${svgWidth}px`;
+            svg.style.width = config.width;
             svg.style.height = `${svgHeight}px`;
 
             // Apply custom positioning from configuration
@@ -66,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const rotationAngle = 20; // Maximum rotation angle
         const maxOffset = 1000; // Maximum offset for the SVGs
-        const additionalOffset = currentSVG.clientWidth * 0.12; // Additional offset for 12% of its width
+        const additionalOffset = parseFloat(currentSVG.style.width) * 0.12; // Additional offset for 12% of its width
 
         // Move the current SVG out to the right
         const currentOffset = maxOffset * progress + additionalOffset;
