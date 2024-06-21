@@ -14,11 +14,20 @@ document.addEventListener("DOMContentLoaded", () => {
     let animationFrameId = null;
 
     const svgConfig = [
-        { index: 0, bottom: '0', right: '-12%', width: '75%' }, // SVG 1
-        { index: 1, bottom: '0', right: '10%', width: '60%' },  // SVG 2
+        { index: 0, bottom: '0', right: '-12%', width: '65%' }, // SVG 1
+        { index: 1, bottom: '15%', right: '10%', width: '50%' },  // SVG 2
         { index: 2, bottom: '0', right: '-20%', width: '100%' }, // SVG 3
-        { index: 3, bottom: '0', right: '-12%', width: '85%' }  // SVG 4
+        { index: 3, bottom: '0', right: '10%', width: '50%' }  // SVG 4
     ];
+
+    // Function to set event listeners
+    function setEventListeners() {
+        window.addEventListener('resize', adjustWidth);
+        window.addEventListener('load', adjustWidth);
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', positionSVGs);
+        DOM_DOT.addEventListener("mousedown", startDrag);
+    }
 
     // Function to position SVGs according to the configuration
     function positionSVGs() {
@@ -32,11 +41,14 @@ document.addEventListener("DOMContentLoaded", () => {
             svg.style.height = `${svgHeight}px`;
 
             // Apply custom positioning from configuration
+            svg.style.position = 'absolute';
             if (config.top) svg.style.top = config.top;
             if (config.bottom) svg.style.bottom = config.bottom;
             if (config.right) svg.style.right = config.right;
             if (config.left) svg.style.left = config.left;
-            svg.style.position = 'absolute'; // Ensure the position is absolute
+
+            // Reset SVG transform to initial state
+            svg.style.transform = 'translateX(0) rotate(0)';
         });
     }
 
@@ -156,22 +168,48 @@ document.addEventListener("DOMContentLoaded", () => {
         logDotPosition(dotPosition);
     }
 
-    // **EVENT LISTENERS**
-    document.body.style.overflow = 'hidden'; // Apply overflow: hidden on page load
+    function adjustWidth() {
+        const appContainer = document.querySelector('.app-container');
+        const header = document.querySelector('.header');
+        const scrollBar = document.querySelector('.custom-scrollbar');
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+        let computedWidth = (16 / 9) * viewportHeight;
 
-    DOM_DOT.addEventListener("mousedown", (e) => {
+        // Check if the computed width exceeds the viewport width
+        if (computedWidth > viewportWidth) {
+            // If it does, use the viewport width and adjust the height to maintain a 1:1 ratio
+            computedWidth = viewportWidth;
+        }
+
+        const marginRight = (viewportWidth - computedWidth) / 2;
+
+        appContainer.style.width = `${computedWidth}px`;
+        header.style.width = `${computedWidth}px`;
+        scrollBar.style.marginRight = `calc(${marginRight}px + 1rem)`; // Adjust scrollbar margin-right
+    }
+
+    function startDrag(e) {
         isDragging = true;
         document.body.style.overflow = 'auto'; // Allow natural scrolling during dragging
         startY = e.clientY;
         startTop = DOM_DOT.offsetTop;
         document.addEventListener("mousemove", onDrag);
         document.addEventListener("mouseup", onStopDrag);
-    });
+    }
 
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener('resize', positionSVGs); // Recalculate positions on resize
+    function resetScrollPosition() {
+        window.scrollTo(0, 0);
+        DOM_DOT.style.top = '0px';
+        positionSVGs(); // Ensure SVGs are reset to their initial positions
+    }
 
-    // Initial call to position SVGs and dot correctly
-    positionSVGs();
+    // Initial setup
+    adjustWidth();
+    resetScrollPosition();
     handleScroll();
+    setEventListeners();
+
+    // Apply overflow: hidden on page load
+    document.body.style.overflow = 'hidden';
 });
