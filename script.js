@@ -12,6 +12,21 @@ document.addEventListener("DOMContentLoaded", () => {
     let startTop = 0;
     let animationFrameId = null;
 
+    // Function to position SVGs halfway on the bottom line of each section
+    function positionSVGs() {
+        SECTIONS.forEach((section, index) => {
+            const svg = SVG_CONTAINERS[index];
+            const sectionHeight = section.clientHeight;
+            const svgHeight = svg.clientHeight;
+
+            // Calculate position: halfway hidden at the bottom of the section
+            const initialTop = sectionHeight - (svgHeight / 2);
+            svg.style.top = `${initialTop}px`;
+            svg.style.right = '0'; // Ensure the SVG is aligned to the right
+            svg.style.position = 'absolute'; // Ensure the position is absolute
+        });
+    }
+
     function handleScroll() {
         const scrollPosition = window.scrollY;
         const sectionHeight = window.innerHeight;
@@ -142,5 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", handleScroll);
 
     // Initial call to position SVGs and dot correctly
+    positionSVGs();
     handleScroll();
 });
