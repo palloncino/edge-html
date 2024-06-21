@@ -13,24 +13,32 @@ document.addEventListener("DOMContentLoaded", () => {
     let startTop = 0;
     let animationFrameId = null;
 
-    // Function to position SVGs halfway on the bottom line of each section and set their width
+    const svgConfig = [
+        { index: 0, bottom: '0', right: '-12%' }, // SVG 1
+        { index: 1, top: '10%', right: '-12%' },  // SVG 2
+        { index: 2, bottom: '0', right: '-12%' }, // SVG 3
+        { index: 3, bottom: '0', right: '-12%' }  // SVG 4
+    ];
+
+    // Function to position SVGs according to the configuration
     function positionSVGs() {
         const appContainerWidth = APP_CONTAINER.clientWidth;
         const svgWidth = appContainerWidth * 0.75;
 
-        SECTIONS.forEach((section, index) => {
-            const svg = SVG_CONTAINERS[index];
-            const sectionHeight = section.clientHeight;
+        svgConfig.forEach(config => {
+            const svg = SVG_CONTAINERS[config.index];
+            const sectionHeight = SECTIONS[config.index].clientHeight;
             const svgHeight = sectionHeight / 2; // Make the SVG height half of the section height
 
             // Set the width and height of the SVG container
             svg.style.width = `${svgWidth}px`;
             svg.style.height = `${svgHeight}px`;
 
-            // Calculate position: halfway hidden at the bottom of the section
-            const initialTop = sectionHeight - (svgHeight / 2);
-            svg.style.top = `${initialTop}px`;
-            svg.style.right = '0'; // Ensure the SVG is aligned to the right
+            // Apply custom positioning from configuration
+            if (config.top) svg.style.top = config.top;
+            if (config.bottom) svg.style.bottom = config.bottom;
+            if (config.right) svg.style.right = config.right;
+            if (config.left) svg.style.left = config.left;
             svg.style.position = 'absolute'; // Ensure the position is absolute
         });
     }
@@ -58,15 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const rotationAngle = 20; // Maximum rotation angle
         const maxOffset = 1000; // Maximum offset for the SVGs
+        const additionalOffset = currentSVG.clientWidth * 0.12; // Additional offset for 12% of its width
 
         // Move the current SVG out to the right
-        const currentOffset = maxOffset * progress;
+        const currentOffset = maxOffset * progress + additionalOffset;
         const currentRotation = rotationAngle * progress;
         currentSVG.style.transform = `translateX(${currentOffset}px) rotate(${currentRotation}deg)`;
 
         // Move the next SVG in from the right
         if (nextSVG) {
-            const nextOffset = maxOffset * (1 - progress);
+            const nextOffset = maxOffset * (1 - progress) + additionalOffset;
             const nextRotation = rotationAngle * (1 - progress);
             nextSVG.style.transform = `translateX(${nextOffset}px) rotate(${nextRotation}deg)`;
         }

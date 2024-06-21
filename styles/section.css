@@ -102,6 +102,5 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    transform: translateY(50%) translateX(25%);
     z-index: -1;
 }
