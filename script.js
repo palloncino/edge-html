@@ -68,31 +68,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const cfg = config.svgConfig[index];
         const currentSVG = SVG_CONTAINERS[index];
         const nextSVG = SVG_CONTAINERS[index + 1];
-
-        const rotationAngle = 20;
-        const maxOffset = 1000;
+    
+        const rotationAngle = 120; // Significantly increased rotation angle for more noticeable rotation
+        const maxOffset = 600; // Increased maxOffset for more vertical movement
         const additionalOffset = parseFloat(currentSVG.style.width) * 0.12;
-
+    
         switch (cfg.movement) {
-            case 'rightRotate':
-                moveSVGRightRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset);
+            case 'a1':
+                a1(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset);
                 break;
-            case 'leftRotate':
-                moveSVGLeftRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset);
-                break;
-            case 'upward':
-                moveSVGUpward(currentSVG, nextSVG, progress, maxOffset);
-                break;
-            case 'right':
-                moveSVGRight(currentSVG, nextSVG, progress, maxOffset);
-                break;
-            case 'left':
-                moveSVGLeft(currentSVG, nextSVG, progress, maxOffset);
+            case 'a2':
+                a2(currentSVG, progress, rotationAngle, maxOffset);
                 break;
         }
     }
+    
 
-    function moveSVGRightRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset) {
+    function a1(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset) {
         const currentOffset = maxOffset * progress + additionalOffset;
         const currentRotation = rotationAngle * progress;
         currentSVG.style.transform = `translateX(${currentOffset}px) rotate(${currentRotation}deg)`;
@@ -104,46 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function moveSVGLeftRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset) {
-        const currentOffset = maxOffset * progress + additionalOffset;
+    function a2(currentSVG, progress, rotationAngle, maxOffset) {
         const currentRotation = -rotationAngle * progress;
-        currentSVG.style.transform = `translateX(-${currentOffset}px) rotate(${currentRotation}deg)`;
-
-        if (nextSVG) {
-            const nextOffset = maxOffset * (1 - progress) + additionalOffset;
-            const nextRotation = -rotationAngle * (1 - progress);
-            nextSVG.style.transform = `translateX(-${nextOffset}px) rotate(${nextRotation}deg)`;
-        }
-    }
-
-    function moveSVGUpward(currentSVG, nextSVG, progress, maxOffset) {
         const currentOffset = maxOffset * progress;
-        currentSVG.style.transform = `translateY(-${currentOffset}px)`;
-
-        if (nextSVG) {
-            const nextOffset = maxOffset * (1 - progress);
-            nextSVG.style.transform = `translateY(-${nextOffset}px)`;
-        }
-    }
-
-    function moveSVGRight(currentSVG, nextSVG, progress, maxOffset) {
-        const currentOffset = maxOffset * progress;
-        currentSVG.style.transform = `translateX(${currentOffset}px)`;
-
-        if (nextSVG) {
-            const nextOffset = maxOffset * (1 - progress);
-            nextSVG.style.transform = `translateX(${nextOffset}px)`;
-        }
-    }
-
-    function moveSVGLeft(currentSVG, nextSVG, progress, maxOffset) {
-        const currentOffset = maxOffset * progress;
-        currentSVG.style.transform = `translateX(-${currentOffset}px)`;
-
-        if (nextSVG) {
-            const nextOffset = maxOffset * (1 - progress);
-            nextSVG.style.transform = `translateX(-${nextOffset}px)`;
-        }
+        currentSVG.style.transform = `translateY(-${currentOffset}px) rotate(${currentRotation}deg)`;
     }
 
     function logDotPosition(position) {
