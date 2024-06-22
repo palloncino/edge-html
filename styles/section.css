@@ -1,106 +1,99 @@
 .sections {
-    height: 400vh; /* Example for 4 sections */
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .section {
-    height: 100vh;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    font-size: 2rem;
+  height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  font-size: 2rem;
 }
 
 .section-content-container {
-    box-sizing: border-box;
-    height: calc(100% - 130px);
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    font-size: 2rem;
+  box-sizing: border-box;
+  height: calc(100% - 130px);
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-size: 2rem;
 }
 
 .section-left-content-container {
-    box-sizing: border-box;
-    height: 100%;
-    max-width: 75%;
-    padding: 40px 0 40px 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
+  box-sizing: border-box;
+  height: 100%;
+  max-width: 75%;
+  padding: 40px 0 40px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .section-heading-text-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4rem;
 }
 
 .section-title-text {
-    max-width: 750px;
-    font-weight: bold;
-    font-size: 3.8rem;
+  max-width: 750px;
+  font-weight: bold;
+  font-size: 3.8rem;
 }
 
 .section-title-2-text {
-    max-width: 750px;
-    font-weight: bold;
-    font-size: 3rem;
+  max-width: 750px;
+  font-weight: bold;
+  font-size: 3rem;
 }
 
 .section-subtitle-text {
-    max-width: 550px;
-    font-weight: lighter;
-    font-size: 2.2rem;
-    line-height: 3.2rem;
+  max-width: 550px;
+  font-weight: lighter;
+  font-size: 2.2rem;
+  line-height: 3.2rem;
 }
 
 .section-action-button {
-    background: #3B1573;
-    color: orange;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1rem;
-    width: 100px;
-    height: 40px;
-    border-radius: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  width: 100px;
+  height: 40px;
+  border-radius: 24px;
 }
 
-.section-1 {
-    position: relative;
-    z-index: -2;
-    background: transparent;
-}
-
-.section-2 {
-    position: relative;
-    z-index: -2;
-    background: transparent;
-}
-
-.section-3 {
-    position: relative;
-    z-index: -2;
-    background: transparent;
-}
-
-.section-4 {
-    position: relative;
-    z-index: -2;
-    background: transparent;
+.section {
+  position: relative;
+  z-index: -2;
+  background: transparent;
 }
 
 .section-svg-container {
-    /* width: computed by script.js */
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
+  /* width: computed by script.js */
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+/* PAGE SPECIFIC STYLES */
+
+.homepage .section-action-button {
+  background: #3b1573;
+  color: orange;
+}
+.homepage .sections {
+  height: 400vh;
+}
+
+.cosa-facciamo .sections {
+  height: 500vh;
 }

@@ -34,3 +34,12 @@
 .custom-scrollbar .dot:hover {
     background: #E846A0;
 }
+
+/* PAGE SPECIFIC STYLES */
+
+.cosa-facciamo .custom-scrollbar {
+    background: white;
+}
+.cosa-facciamo .custom-scrollbar .dot {
+    background: orange;
+}

@@ -1,11 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const currentPage = getPageKeyFromClass();
+    if (!currentPage) {
+        console.error('Unknown page configuration.');
+        return;
+    }
+    const config = pageConfigurations[currentPage];
+
     const SECTIONS = document.querySelectorAll("section");
     const SVG_CONTAINERS = document.querySelectorAll(".section-svg-container");
     const SCROLLBAR = document.querySelector(".custom-scrollbar");
     const DOM_DOT = document.querySelector(".custom-scrollbar .dot");
     const APP_CONTAINER = document.querySelector('.app-container');
     const SCROLLBAR_HEIGHT = SCROLLBAR.clientHeight - DOM_DOT.clientHeight;
-    const SEGMENT_HEIGHT = SCROLLBAR_HEIGHT / (SECTIONS.length - 1);
+    const SEGMENT_HEIGHT = SCROLLBAR_HEIGHT / (config.sections - 1);
     const TRANSITION_DURATION = 300; // Transition duration in milliseconds
 
     let isDragging = false;
@@ -13,14 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let startTop = 0;
     let animationFrameId = null;
 
-    const svgConfig = [
-        { index: 0, bottom: '0', right: '-12%', width: '65%' }, // SVG 1
-        { index: 1, bottom: '15%', right: '10%', width: '50%' },  // SVG 2
-        { index: 2, bottom: '0', right: '-20%', width: '100%' }, // SVG 3
-        { index: 3, bottom: '0', right: '10%', width: '50%' }  // SVG 4
-    ];
-
-    // Function to set event listeners
     function setEventListeners() {
         window.addEventListener('resize', adjustWidth);
         window.addEventListener('load', adjustWidth);
@@ -29,25 +28,21 @@ document.addEventListener("DOMContentLoaded", () => {
         DOM_DOT.addEventListener("mousedown", startDrag);
     }
 
-    // Function to position SVGs according to the configuration
     function positionSVGs() {
-        svgConfig.forEach(config => {
-            const svg = SVG_CONTAINERS[config.index];
-            const sectionHeight = SECTIONS[config.index].clientHeight;
-            const svgHeight = sectionHeight / 2; // Make the SVG height half of the section height
+        config.svgConfig.forEach(cfg => {
+            const svg = SVG_CONTAINERS[cfg.index];
+            const sectionHeight = SECTIONS[cfg.index].clientHeight;
+            const svgHeight = sectionHeight / 2;
 
-            // Set the width and height of the SVG container
-            svg.style.width = config.width;
+            svg.style.width = cfg.width;
             svg.style.height = `${svgHeight}px`;
 
-            // Apply custom positioning from configuration
             svg.style.position = 'absolute';
-            if (config.top) svg.style.top = config.top;
-            if (config.bottom) svg.style.bottom = config.bottom;
-            if (config.right) svg.style.right = config.right;
-            if (config.left) svg.style.left = config.left;
+            if (cfg.top) svg.style.top = cfg.top;
+            if (cfg.bottom) svg.style.bottom = cfg.bottom;
+            if (cfg.right) svg.style.right = cfg.right;
+            if (cfg.left) svg.style.left = cfg.left;
 
-            // Reset SVG transform to initial state
             svg.style.transform = 'translateX(0) rotate(0)';
         });
     }
@@ -70,23 +65,84 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateSVGPosition(index, progress) {
+        const cfg = config.svgConfig[index];
         const currentSVG = SVG_CONTAINERS[index];
         const nextSVG = SVG_CONTAINERS[index + 1];
 
-        const rotationAngle = 20; // Maximum rotation angle
-        const maxOffset = 1000; // Maximum offset for the SVGs
-        const additionalOffset = parseFloat(currentSVG.style.width) * 0.12; // Additional offset for 12% of its width
+        const rotationAngle = 20;
+        const maxOffset = 1000;
+        const additionalOffset = parseFloat(currentSVG.style.width) * 0.12;
 
-        // Move the current SVG out to the right
+        switch (cfg.movement) {
+            case 'rightRotate':
+                moveSVGRightRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset);
+                break;
+            case 'leftRotate':
+                moveSVGLeftRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset);
+                break;
+            case 'upward':
+                moveSVGUpward(currentSVG, nextSVG, progress, maxOffset);
+                break;
+            case 'right':
+                moveSVGRight(currentSVG, nextSVG, progress, maxOffset);
+                break;
+            case 'left':
+                moveSVGLeft(currentSVG, nextSVG, progress, maxOffset);
+                break;
+        }
+    }
+
+    function moveSVGRightRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset) {
         const currentOffset = maxOffset * progress + additionalOffset;
         const currentRotation = rotationAngle * progress;
         currentSVG.style.transform = `translateX(${currentOffset}px) rotate(${currentRotation}deg)`;
 
-        // Move the next SVG in from the right
         if (nextSVG) {
             const nextOffset = maxOffset * (1 - progress) + additionalOffset;
             const nextRotation = rotationAngle * (1 - progress);
             nextSVG.style.transform = `translateX(${nextOffset}px) rotate(${nextRotation}deg)`;
+        }
+    }
+
+    function moveSVGLeftRotate(currentSVG, nextSVG, progress, maxOffset, rotationAngle, additionalOffset) {
+        const currentOffset = maxOffset * progress + additionalOffset;
+        const currentRotation = -rotationAngle * progress;
+        currentSVG.style.transform = `translateX(-${currentOffset}px) rotate(${currentRotation}deg)`;
+
+        if (nextSVG) {
+            const nextOffset = maxOffset * (1 - progress) + additionalOffset;
+            const nextRotation = -rotationAngle * (1 - progress);
+            nextSVG.style.transform = `translateX(-${nextOffset}px) rotate(${nextRotation}deg)`;
+        }
+    }
+
+    function moveSVGUpward(currentSVG, nextSVG, progress, maxOffset) {
+        const currentOffset = maxOffset * progress;
+        currentSVG.style.transform = `translateY(-${currentOffset}px)`;
+
+        if (nextSVG) {
+            const nextOffset = maxOffset * (1 - progress);
+            nextSVG.style.transform = `translateY(-${nextOffset}px)`;
+        }
+    }
+
+    function moveSVGRight(currentSVG, nextSVG, progress, maxOffset) {
+        const currentOffset = maxOffset * progress;
+        currentSVG.style.transform = `translateX(${currentOffset}px)`;
+
+        if (nextSVG) {
+            const nextOffset = maxOffset * (1 - progress);
+            nextSVG.style.transform = `translateX(${nextOffset}px)`;
+        }
+    }
+
+    function moveSVGLeft(currentSVG, nextSVG, progress, maxOffset) {
+        const currentOffset = maxOffset * progress;
+        currentSVG.style.transform = `translateX(-${currentOffset}px)`;
+
+        if (nextSVG) {
+            const nextOffset = maxOffset * (1 - progress);
+            nextSVG.style.transform = `translateX(-${nextOffset}px)`;
         }
     }
 
@@ -111,19 +167,19 @@ document.addEventListener("DOMContentLoaded", () => {
             DOM_DOT.style.top = `${currentPosition}px`;
             logDotPosition(currentPosition);
 
-            const scrollPosition = (currentPosition / SCROLLBAR_HEIGHT) * (SECTIONS.length - 1) * window.innerHeight;
+            const scrollPosition = (currentPosition / SCROLLBAR_HEIGHT) * (config.sections - 1) * window.innerHeight;
             window.scrollTo({ top: scrollPosition });
 
             if (progress < 1) {
                 animationFrameId = requestAnimationFrame(animationStep);
             } else {
-                document.body.style.overflow = 'hidden'; // Reapply overflow: hidden
-                animationFrameId = null; // Reset the animation frame id
+                document.body.style.overflow = 'hidden';
+                animationFrameId = null;
             }
         }
 
         if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId); // Cancel any ongoing animation
+            cancelAnimationFrame(animationFrameId);
         }
 
         animationFrameId = requestAnimationFrame(animationStep);
@@ -145,25 +201,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const delta = e.clientY - startY;
             let newPosition = startTop + delta;
 
-            // **Restrict movement within the scrollbar**
             newPosition = Math.max(0, Math.min(newPosition, SCROLLBAR_HEIGHT));
 
             DOM_DOT.style.top = `${newPosition}px`;
             logDotPosition(newPosition);
 
-            // Calculate the corresponding scroll position and scroll the page
-            const scrollPosition = (newPosition / SCROLLBAR_HEIGHT) * (SECTIONS.length - 1) * window.innerHeight;
+            const scrollPosition = (newPosition / SCROLLBAR_HEIGHT) * (config.sections - 1) * window.innerHeight;
             window.scrollTo({ top: scrollPosition });
         }
     }
 
     function updateDotPosition() {
         if (animationFrameId) {
-            return; // If an animation is ongoing, skip updating the position
+            return;
         }
 
         const scrollPosition = window.scrollY;
-        const dotPosition = (scrollPosition / ((SECTIONS.length - 1) * window.innerHeight)) * SCROLLBAR_HEIGHT;
+        const dotPosition = (scrollPosition / ((config.sections - 1) * window.innerHeight)) * SCROLLBAR_HEIGHT;
         DOM_DOT.style.top = `${dotPosition}px`;
         logDotPosition(dotPosition);
     }
@@ -176,9 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const viewportWidth = window.innerWidth;
         let computedWidth = (16 / 9) * viewportHeight;
 
-        // Check if the computed width exceeds the viewport width
         if (computedWidth > viewportWidth) {
-            // If it does, use the viewport width and adjust the height to maintain a 1:1 ratio
             computedWidth = viewportWidth;
         }
 
@@ -186,12 +238,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         appContainer.style.width = `${computedWidth}px`;
         header.style.width = `${computedWidth}px`;
-        scrollBar.style.marginRight = `calc(${marginRight}px + 1rem)`; // Adjust scrollbar margin-right
+        scrollBar.style.marginRight = `calc(${marginRight}px + 1rem)`;
     }
 
     function startDrag(e) {
         isDragging = true;
-        document.body.style.overflow = 'auto'; // Allow natural scrolling during dragging
+        document.body.style.overflow = 'auto';
         startY = e.clientY;
         startTop = DOM_DOT.offsetTop;
         document.addEventListener("mousemove", onDrag);
@@ -201,15 +253,23 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetScrollPosition() {
         window.scrollTo(0, 0);
         DOM_DOT.style.top = '0px';
-        positionSVGs(); // Ensure SVGs are reset to their initial positions
     }
 
-    // Initial setup
-    adjustWidth();
-    resetScrollPosition();
-    handleScroll();
-    setEventListeners();
+    function getPageKeyFromClass() {
+        const bodyClassList = document.body.classList;
+        if (bodyClassList.contains('homepage')) return 'home';
+        if (bodyClassList.contains('cosa-facciamo')) return 'whatWeDo';
+        return null;
+    }
 
-    // Apply overflow: hidden on page load
+    function initialSetup() {
+        adjustWidth();
+        resetScrollPosition();
+        positionSVGs();
+        handleScroll();
+        setEventListeners();
+    }
+
+    initialSetup();
     document.body.style.overflow = 'hidden';
 });
